@@ -207,17 +207,17 @@ def make_magnetization_plot(data, path):
     temp = []
     curves = [[], [], [], [], [], [], []]
 
-    for j, i in data:
-        temp.append(j)
-        curves[0].append(i[:, 0])
-        curves[1].append(i[:, 1] / i[:, 0])
-        curves[2].append(i[:, 2] / i[:, 0])
-        curves[3].append(i[:, 3] / i[:, 0])
-        # curves[2].append(i[:, 2] / i[:, 1])
-        # curves[3].append(i[:, 3] / i[:, 1])
-        curves[4].append(i[:, 4])
-        curves[5].append(i[:, 5])
-        curves[6].append(i[:, 6])
+    for i, j in data:
+        temp.append(i)
+        curves[0].append(j[:, 0])
+        curves[1].append(j[:, 1] / j[:, 0])
+        curves[2].append(j[:, 2] / j[:, 0])
+        curves[3].append(j[:, 3] / j[:, 0])
+        # curves[2].append(j[:, 2] / j[:, 1])
+        # curves[3].append(j[:, 3] / j[:, 1])
+        curves[4].append(j[:, 4])
+        curves[5].append(j[:, 5])
+        curves[6].append(j[:, 6])
 
     max_baseline = max([i[0] for i in curves[1]])
     max_peaks = max(
