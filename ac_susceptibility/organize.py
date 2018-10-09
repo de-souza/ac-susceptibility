@@ -97,7 +97,7 @@ def get_temperature(files):
         for file in files
     ]
     temperature = np.around(np.nanmean(temperature_list))
-    return "{:g}K".format(temperature)
+    return f"{temperature}K"
 
 
 def renamed_if_exists(folder):
@@ -110,7 +110,7 @@ def renamed_if_exists(folder):
     current_name = folder.name
     i = 1
     while folder.exists():
-        new_name = current_name + " ({})".format(i)
+        new_name = current_name + f" ({i})"
         folder = folder.parent / new_name
         i += 1
     return folder

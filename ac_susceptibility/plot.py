@@ -158,7 +158,7 @@ def make_voltage_plot(data, fit, path):
         path: The path of the saved plot as a "Path" object.
 
     """
-    print('Saving plot "{}"...'.format(path))
+    print(f'Saving plot "{path}"...')
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -198,7 +198,7 @@ def make_magnetization_plot(data, path):
         path: The path of the saved plot as a "Path" object.
 
     """
-    print('Saving plot "{}"...'.format(path.name))
+    print(f'Saving plot "{path.name}"...')
 
     if not isinstance(data[0], list):
         print("data is not a list")
@@ -353,7 +353,7 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
     axes.set_ylabel(kwargs.get("ylabel", ""))
 
     axes.set_xscale(kwargs.get("xscale", "linear"))
-    axes.set_xticklabels(["{:g}".format(i) for i in axes.get_xticks()])
+    axes.set_xticklabels([f"{i:g}" for i in axes.get_xticks()])
 
     axes.set_title(kwargs.get("title", ""))
     axes.grid(True)
