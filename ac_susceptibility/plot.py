@@ -78,7 +78,7 @@ def sorted_subfolders(folder):
 
     """
     subfolders = [entry for entry in folder.iterdir() if entry.is_dir()]
-    subfolders = sorted(subfolders, key=lambda x: int(x.name[:-1]))
+    subfolders = sorted(subfolders, key=lambda x: int(x.name.split("K")[0]))
     return subfolders
 
 

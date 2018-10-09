@@ -43,6 +43,7 @@ def organize(data_path):
                 ]
 
                 sorted_subfolder = measurement_folder / get_temperature(unsorted_files)
+                sorted_subfolder = renamed_if_exists(sorted_subfolder)
                 sorted_subfolder.mkdir(parents=True, exist_ok=True)
 
                 for file in unsorted_files:
@@ -59,9 +60,7 @@ def iter_unsorted_subfolders(folder):
         folder: A folder as a "Path" object.
 
     """
-    return (
-        subfolder for subfolder in folder.iterdir() if not subfolder.name.endswith("K")
-    )
+    return (subfolder for subfolder in folder.iterdir() if "K" not in subfolder.name)
 
 
 def remove_non_txt_files(folder):
@@ -99,6 +98,22 @@ def get_temperature(files):
     ]
     temperature = np.around(np.nanmean(temperature_list))
     return "{:g}K".format(temperature)
+
+
+def renamed_if_exists(folder):
+    """Return a renamed folder if current name already exists.
+
+    Args:
+        folder: A folder as a "Path" object.
+
+    """
+    current_name = folder.name
+    i = 1
+    while folder.exists():
+        new_name = current_name + " ({})".format(i)
+        folder = folder.parent / new_name
+        i += 1
+    return folder
 
 
 def sorted_filename(file):
