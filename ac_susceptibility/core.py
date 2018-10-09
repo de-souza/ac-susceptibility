@@ -16,8 +16,8 @@
 from pathlib import Path
 import argparse
 
-from ac_susceptibility.organize import organize
-from ac_susceptibility.plot import plot
+from .organize import organize
+from .plot import plot
 
 
 def ac_susceptibility(skip_voltage, data_path):
