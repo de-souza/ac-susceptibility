@@ -33,13 +33,11 @@ def plot(data_path, skip_voltage):
         for temperature_folder in sorted_subfolders(measurement_folder):
 
             freqs_and_files = list_freqs_and_files(temperature_folder)
-
             temperature_data = np.empty((len(freqs_and_files), 7))
 
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
                 data = load_data(voltage_file)
-
                 fit, pfit = fit_voltage(data)
                 temperature_data[i] = freq, *pfit
 
@@ -75,8 +73,8 @@ def sorted_subfolders(folder):
         folder: A parent folder as a "Path" object.
 
     Returns:
-        A list of "Path" objects corresponding to the temperature
-        subfolders, sorted by temperature.
+        A list of "Path" objects corresponding to the sorted temperature
+        subfolders.
 
     """
     subfolders = [entry for entry in folder.iterdir() if entry.is_dir()]
@@ -104,11 +102,11 @@ def load_data(file):
     """Return the position, amplitude and phase data from a file.
 
     Args:
-        file: The file's "Path" object.
+        file: A file's "Path" object.
 
     Returns:
-        An array containing the position of the sample, the amplitude of the
-        voltage measured by the lock-in amplifier, and its phase.
+        An array containing the position of the sample, the amplitude of
+        the voltage measured by the lock-in amplifier, and its phase.
 
     """
     data = np.genfromtxt(file.as_posix(), skip_header=5, usecols=(0, 1, 2, 3, 4))
@@ -121,12 +119,13 @@ def fit_voltage(data):
     """Return the fit of the voltage and its parameters.
 
     Args:
-        data: An array containing the position of the sample, the amplitude of
-            the voltage measured by the lock-in amplifier, and its phase.
+        data: An array containing the position of the sample, the
+            amplitude of the voltage measured by the lock-in amplifier,
+            and its phase.
 
     Returns:
-        A tuple of containing the fitted data and a list of the amplitude of the
-        baseline and each peak and their phase.
+        A tuple of containing the fitted data and a list of the
+        amplitude of the baseline and each peak and their phase.
 
     """
     x_fit, x_pfit = _fit_asym2sig(data[:, 0], data[:, 1])
@@ -152,10 +151,11 @@ def make_voltage_plot(data, fit, path):
     """Plot amplitude and phase of the signal versus sample position.
 
     Args:
-        path: A string containing the path of the saved plot.
-        data: An array containing the position of the sample, the amplitude of
-            the voltage measured by the lock-in amplifier, and its phase.
-        fit: Same as "data" but with fitted instead of measured values.
+        data: An array containing the position of the sample, the
+            amplitude of the voltage measured by the lock-in amplifier,
+            and its phase.
+        fit: Same object as "data" with fitted values.
+        path: The path of the saved plot as a "Path" object.
 
     """
     print('Saving plot "{}"...'.format(path))
@@ -191,11 +191,11 @@ def make_magnetization_plot(data, path):
     """Plot amplitude and phase of the signal versus frequency.
 
     Args:
-        data: An array or a list of arrays containing the position of the
-            sample, the amplitude of the baseline and each peak, and their
-            phase.
-        temp: A string or list of strings containing the temperature.
-        path: A measurement file as a "Path" object.
+        data: An array or a list of arrays containing tuples of:
+            - A string or list of strings containing the temperature.
+            - The position of the sample, the amplitude of the baseline
+                and each peak, and their phase.
+        path: The path of the saved plot as a "Path" object.
 
     """
     print('Saving plot "{}"...'.format(path.name))
@@ -320,7 +320,8 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
     Args:
         axes: The "Axes" object where the plots are drawn.
         freq: An array or list of arrays of the x values.
-        data: An array or list of arrays of y values plotted with markers.
+        data: An array or list of arrays of y values plotted with
+            markers.
         fit: An array or list of arrays of y values plotted with lines.
         kwargs: Optional keyword arguments:
             - title: The title string.
@@ -396,8 +397,8 @@ def _asym2sig(params, pos):
     """Return an asymmetric double sigmoidal function of the position.
 
     The asymmetric double sigmoidal function is the difference of two
-    independent sigmoidal functions. They are expressed here as hyperbolic
-    tangents in order to reduce the computer time.
+    independent sigmoidal functions. They are expressed here as 
+    hyperbolic tangents in order to reduce the computer time.
 
     Args:
         params: A list of all the function parameters.

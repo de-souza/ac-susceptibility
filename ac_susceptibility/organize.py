@@ -21,7 +21,7 @@ def organize(data_path):
     """Reorganize data in temperature subfolders and frequency files.
 
     Args:
-        input_folder: A data folder as a "Path" object.
+        data_path: A data folder as a "Path" object.
 
     """
     input_folder = data_path / "input"
@@ -53,7 +53,7 @@ def organize(data_path):
 
 
 def iter_unsorted_subfolders(folder):
-    """Return an iterator of unsorted subfolders.
+    """Return an iterator over not yet sorted subfolders.
 
     Args:
         folder: A folder as a "Path" object.
@@ -77,7 +77,7 @@ def remove_non_txt_files(folder):
 
 
 def get_measurement_number(file):
-    """Return a measurement number from a file name.
+    """Return a measurement number from a file's name.
 
     Args:
         file: A file as a "Path" object.
@@ -87,7 +87,7 @@ def get_measurement_number(file):
 
 
 def get_temperature(files):
-    """Return the mean temperature from an list of files as a string.
+    """Return a string of the mean temperature from an list of files.
 
     Args:
         files: An iterable of files as "Path" objects.
