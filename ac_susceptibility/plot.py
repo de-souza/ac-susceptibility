@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 
 
-def plot(data_path, skip_voltage):
+def plot(data_path, skip_voltage, calibration_data):
     """Plot magnetization and/or voltage from measurement files."""
     init_matplotlib()
 

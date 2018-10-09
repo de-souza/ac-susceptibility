@@ -17,6 +17,7 @@ from pathlib import Path
 import argparse
 
 from .organize import organize
+from .calibrate import calibrate
 from .plot import plot
 
 
@@ -26,10 +27,9 @@ def ac_susceptibility(skip_voltage, data_path):
         data_path = Path(__file__).parents[1] / "data"
     else:
         data_path = Path(data_path)
-
     organize(data_path)
-
-    plot(data_path, skip_voltage)
+    calibration_data = calibrate(data_path)
+    plot(data_path, skip_voltage, calibration_data)
 
 
 def parse_args():
