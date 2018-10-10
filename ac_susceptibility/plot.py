@@ -393,6 +393,40 @@ def _fit_asym2sig(position, voltage):
     return fit, pfit[:3]
 
 
+def _fit_asym2sig_stable(position, voltage, fixed_params):
+    """Return a asymmetric double sigmoidal fit and its parameters.
+
+    Args:
+        position: An array of floats of the position.
+        voltage: An array of floats of the voltage.
+        fixed_params: A list of floats of the known parameters.
+
+    """
+    # _asym2sig() parameters with the 8 fixed parameters
+    params_stable = lambda params: [
+        *params[:3],
+        fixed_params[0] + params[3],
+        fixed_params[1] + params[3],
+        fixed_params[2] + params[3],
+        fixed_params[3] + params[3],
+        *fixed_params[4:],
+    ]
+
+    # Version of _asym2sig() with only 4 free parameters
+    asym2sig_stable = lambda params, pos: _asym2sig(params_stable(params), pos)
+
+    baseline = (max(voltage) + min(voltage)) / 2
+
+    init_params = [baseline, max(voltage) - baseline, min(voltage) - baseline, 0]
+
+    residuals = lambda params: voltage - asym2sig_stable(params, position)
+
+    pfit = least_squares(residuals, init_params).x
+    fit = asym2sig_stable(pfit, position)
+
+    return fit, pfit[:3]
+
+
 def _asym2sig(params, pos):
     """Return an asymmetric double sigmoidal function of the position.
 
