@@ -374,17 +374,14 @@ def _fit_asym2sig(position, voltage):
     u_0 = baseline
     u_max = max(voltage) - baseline
     u_min = min(voltage) - baseline
-
     x_c1 = pos_max - (pos_min - pos_max) / 4
     x_c2 = pos_max + (pos_min - pos_max) / 4
     x_c3 = pos_min - (pos_min - pos_max) / 4
     x_c4 = pos_min + (pos_min - pos_max) / 4
-
     w_1 = 2
     w_2 = 2
     w_3 = 2
     w_4 = 2
-
     init_params = [u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4]
 
     residuals = lambda pfit: voltage - _asym2sig(pfit, position)
@@ -395,7 +392,7 @@ def _fit_asym2sig(position, voltage):
     return fit, pfit[:3]
 
 
-def _fit_asym2sig_stable(position, voltage, fixed_params):
+def _stable_fit_asym2sig(position, voltage, fixed_params):
     """Return a asymmetric double sigmoidal fit and its parameters.
 
     Args:
@@ -404,27 +401,40 @@ def _fit_asym2sig_stable(position, voltage, fixed_params):
         fixed_params: A list of floats of the known parameters.
 
     """
-    # _asym2sig() parameters with the 8 fixed parameters
-    params_stable = lambda params: [
-        *params[:3],
-        fixed_params[0] + params[3],
-        fixed_params[1] + params[3],
-        fixed_params[2] + params[3],
-        fixed_params[3] + params[3],
-        *fixed_params[4:],
+    x_c1 = lambda x_c: fixed_params[0] + x_c
+    x_c2 = lambda x_c: fixed_params[1] + x_c
+    x_c3 = lambda x_c: fixed_params[2] + x_c
+    x_c4 = lambda x_c: fixed_params[3] + x_c
+    w_1 = fixed_params[4]
+    w_2 = fixed_params[5]
+    w_3 = fixed_params[6]
+    w_4 = fixed_params[7]
+    asym2sig_params = lambda u_0, u_max, u_min, x_c: [
+        u_0,
+        u_max,
+        u_min,
+        x_c1(x_c),
+        x_c2(x_c),
+        x_c3(x_c),
+        x_c4(x_c),
+        w_1,
+        w_2,
+        w_3,
+        w_4,
     ]
-
-    # Version of _asym2sig() with only 4 free parameters
-    asym2sig_stable = lambda params, pos: _asym2sig(params_stable(params), pos)
+    stable_asym2sig = lambda params, pos: _asym2sig(asym2sig_params(*params), pos)
 
     baseline = (max(voltage) + min(voltage)) / 2
+    init_u_0 = baseline
+    init_u_max = max(voltage) - baseline
+    init_u_min = min(voltage) - baseline
+    init_x_c = 0
+    init_params = [init_u_0, init_u_max, init_u_min, init_x_c]
 
-    init_params = [baseline, max(voltage) - baseline, min(voltage) - baseline, 0]
-
-    residuals = lambda params: voltage - asym2sig_stable(params, position)
+    residuals = lambda params: voltage - stable_asym2sig(params, position)
 
     pfit = least_squares(residuals, init_params).x
-    fit = asym2sig_stable(pfit, position)
+    fit = stable_asym2sig(pfit, position)
 
     return fit, pfit[:3]
 
