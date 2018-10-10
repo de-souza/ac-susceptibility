@@ -24,5 +24,28 @@ def calibrate(data_path):
         data_path: A data folder as a "Path" object.
 
     """
-    calibration_data = None
+    calibration_data = {
+        "fit_parameters": [
+            [
+                -1.31482959e01,
+                -1.87763231e01,
+                -2.52376225e01,
+                -3.07832386e01,
+                2.66677577e00,
+                2.75115124e00,
+                2.52019421e00,
+                3.20146748e00,
+            ],
+            [
+                -1.31740494e01,
+                -1.87372536e01,
+                -2.51468752e01,
+                -3.08226837e01,
+                2.77568482e00,
+                2.87184774e00,
+                2.50477186e00,
+                3.11997439e00,
+            ],
+        ]
+    }
     return calibration_data
