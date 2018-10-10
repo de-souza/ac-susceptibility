@@ -371,19 +371,21 @@ def _fit_asym2sig(position, voltage):
     pos_min = position[voltage.argmin()]
     baseline = (max(voltage) + min(voltage)) / 2
 
-    init_params = [
-        baseline,
-        max(voltage) - baseline,
-        min(voltage) - baseline,
-        pos_max - (pos_min - pos_max) / 4,
-        pos_max + (pos_min - pos_max) / 4,
-        pos_min - (pos_min - pos_max) / 4,
-        pos_min + (pos_min - pos_max) / 4,
-        2,
-        2,
-        2,
-        2,
-    ]
+    u_0 = baseline
+    u_max = max(voltage) - baseline
+    u_min = min(voltage) - baseline
+
+    xc_1 = pos_max - (pos_min - pos_max) / 4
+    xc_2 = pos_max + (pos_min - pos_max) / 4
+    xc_3 = pos_min - (pos_min - pos_max) / 4
+    xc_4 = pos_min + (pos_min - pos_max) / 4
+
+    w_1 = 2
+    w_2 = 2
+    w_3 = 2
+    w_4 = 2
+
+    init_params = [u_0, u_max, u_min, xc_1, xc_2, xc_3, xc_4, w_1, w_2, w_3, w_4]
 
     residuals = lambda pfit: voltage - _asym2sig(pfit, position)
 
