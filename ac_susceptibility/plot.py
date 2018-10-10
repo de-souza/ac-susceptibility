@@ -375,17 +375,17 @@ def _fit_asym2sig(position, voltage):
     u_max = max(voltage) - baseline
     u_min = min(voltage) - baseline
 
-    xc_1 = pos_max - (pos_min - pos_max) / 4
-    xc_2 = pos_max + (pos_min - pos_max) / 4
-    xc_3 = pos_min - (pos_min - pos_max) / 4
-    xc_4 = pos_min + (pos_min - pos_max) / 4
+    x_c1 = pos_max - (pos_min - pos_max) / 4
+    x_c2 = pos_max + (pos_min - pos_max) / 4
+    x_c3 = pos_min - (pos_min - pos_max) / 4
+    x_c4 = pos_min + (pos_min - pos_max) / 4
 
     w_1 = 2
     w_2 = 2
     w_3 = 2
     w_4 = 2
 
-    init_params = [u_0, u_max, u_min, xc_1, xc_2, xc_3, xc_4, w_1, w_2, w_3, w_4]
+    init_params = [u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4]
 
     residuals = lambda pfit: voltage - _asym2sig(pfit, position)
 
@@ -441,9 +441,9 @@ def _asym2sig(params, pos):
         pos: A float or array of floats of the position.
 
     """
-    u_0, u_max, u_min, xc_1, xc_2, xc_3, xc_4, w_1, w_2, w_3, w_4 = params
+    u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4 = params
     return (
         u_0
-        + u_max * (np.tanh((pos - xc_1) / w_1) - np.tanh((pos - xc_2) / w_2)) / 2
-        + u_min * (np.tanh((pos - xc_3) / w_3) - np.tanh((pos - xc_4) / w_4)) / 2
+        + u_max * (np.tanh((pos - x_c1) / w_1) - np.tanh((pos - x_c2) / w_2)) / 2
+        + u_min * (np.tanh((pos - x_c3) / w_3) - np.tanh((pos - x_c4) / w_4)) / 2
     )
