@@ -38,7 +38,7 @@ def plot(data_path, skip_voltage, calibration_data):
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
                 data = load_data(voltage_file)
-                fit, pfit = fit_voltage(data)
+                fit, pfit = fit_voltage(data, calibration_data)
                 temperature_data[i] = freq, *pfit
 
                 if not skip_voltage:
@@ -115,7 +115,7 @@ def load_data(file):
     return data
 
 
-def fit_voltage(data):
+def fit_voltage(data, calibration_data):
     """Return the fit of the voltage and its parameters.
 
     Args:
@@ -128,8 +128,13 @@ def fit_voltage(data):
         amplitude of the baseline and each peak and their phase.
 
     """
-    x_fit, x_pfit = _fit_asym2sig(data[:, 0], data[:, 1])
-    y_fit, y_pfit = _fit_asym2sig(data[:, 0], data[:, 2])
+    if "fit_parameters" in calibration_data:
+        x_params, y_params = calibration_data["fit_parameters"]
+        x_fit, x_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 1], x_params)
+        y_fit, y_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 2], y_params)
+    else:
+        x_fit, x_pfit = _fit_asym2sig(data[:, 0], data[:, 1])
+        y_fit, y_pfit = _fit_asym2sig(data[:, 0], data[:, 2])
 
     z_fit = x_fit + 1j * y_fit
 
