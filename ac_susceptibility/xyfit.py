@@ -116,7 +116,7 @@ def partial_fit(position, voltage, fixed_params):
         w_3,
         w_4,
     ]
-    partial_asym2sig = lambda params, pos: asym2sig(pos, partial_params(*params))
+    partial_asym2sig = lambda pos, params: asym2sig(pos, partial_params(*params))
 
     baseline = (max(voltage) + min(voltage)) / 2
     init_u_0 = baseline
