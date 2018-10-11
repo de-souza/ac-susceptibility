@@ -272,17 +272,6 @@ def make_magnetization_plot(data, path):
     plt.close()
 
 
-def _to_polar(xy_data):
-    z_data = xy_data[1] + 1j * xy_data[2]
-
-    polar_data = np.empty_like(xy_data)
-    polar_data[0] = xy_data[0]
-    polar_data[1] = np.abs(z_data)
-    polar_data[2] = np.angle(z_data, deg=True)
-
-    return polar_data
-
-
 def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
     """Draws plots using the matplotlib.axes.Axes class.
 
