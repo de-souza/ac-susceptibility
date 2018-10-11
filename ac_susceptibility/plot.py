@@ -16,7 +16,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .xyfit import xyfit 
+from .load import load
+from .xyfit import xyfit
 
 
 def plot(data_path, skip_voltage, calibration_data):
@@ -37,7 +38,7 @@ def plot(data_path, skip_voltage, calibration_data):
 
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
-                data = load_data(voltage_file)
+                data = load(voltage_file)
                 fit, pfit = xyfit(data, calibration_data)
                 temperature_data[i] = freq, *pfit
 
@@ -96,23 +97,6 @@ def list_freqs_and_files(folder):
     files = [entry for entry in folder.iterdir() if entry.name.endswith("txt")]
     freqs = [float(entry.stem[:-2]) for entry in files]
     return sorted(zip(freqs, files))
-
-
-def load_data(file):
-    """Return the position, amplitude and phase data from a file.
-
-    Args:
-        file: A file's "Path" object.
-
-    Returns:
-        An array containing the position of the sample, the amplitude of
-        the voltage measured by the lock-in amplifier, and its phase.
-
-    """
-    data = np.genfromtxt(file.as_posix(), skip_header=5, usecols=(0, 1, 2, 3, 4))
-    data[:, 0] -= data[0, 0]  # zero as first position
-    data[:, 0] /= 250  # to millimeters
-    return data
 
 
 def make_voltage_plot(data, fit, path):
