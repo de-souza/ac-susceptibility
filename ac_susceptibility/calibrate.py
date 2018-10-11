@@ -15,36 +15,43 @@
 #
 import numpy as np
 
+from .load import load_file
+from .xyfit import xyfit
+
 
 def calibrate(data_path):
-    """Calibrate.
+    """Obtain the calibration values from a set of coils.
 
     Args:
         data_path: A data folder as a "Path" object.
 
     """
-    calibration_data = {
-        "fit_parameters": [
-            [
-                -1.31482959e01,
-                -1.87763231e01,
-                -2.52376225e01,
-                -3.07832386e01,
-                2.66677577e00,
-                2.75115124e00,
-                2.52019421e00,
-                3.20146748e00,
-            ],
-            [
-                -1.31740494e01,
-                -1.87372536e01,
-                -2.51468752e01,
-                -3.08226837e01,
-                2.77568482e00,
-                2.87184774e00,
-                2.50477186e00,
-                3.11997439e00,
-            ],
-        ]
-    }
+    calibration_data = {}
+
+    fit_params = fit_parameters(data_path)
+    if fit_params is not None:
+        calibration_data["fit_parameters"] = fit_params.real, fit_params.imag
+
     return calibration_data
+
+
+def fit_parameters(data_path):
+    """Obtain the best values for the fit parameters.
+
+    Args:
+        data_path: A data folder as a "Path" object.
+
+    """
+    folder_path = data_path / "calibration" / "fit_parameters"
+    files = list(folder_path.iterdir())
+
+    if files:
+        pfit = np.empty((len(files), 11), dtype=np.complex_)
+        for i, voltage_file in enumerate(files):
+            data = load_file(voltage_file)
+            _, pfit[i] = xyfit(data, {})
+        fit_params = np.median(pfit, axis=0)[3:]
+    else:
+        fit_params = None
+
+    return fit_params
