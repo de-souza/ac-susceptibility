@@ -17,7 +17,7 @@ import numpy as np
 from scipy.optimize import least_squares
 
 
-def xyfit(data, calibration_data, full=False):
+def xyfit(data, calibration_data):
     """Return the fit of the voltage data and its parameters.
 
     Args:
