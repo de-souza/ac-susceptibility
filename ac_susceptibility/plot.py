@@ -154,7 +154,6 @@ def make_magnetization_plot(data, path):
     print(f'Saving plot "{path.name}"...')
 
     if not isinstance(data[0], list):
-        print("data is not a list")
         data = [data]
 
     temp = []
