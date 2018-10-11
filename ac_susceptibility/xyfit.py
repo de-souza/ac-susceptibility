@@ -17,7 +17,7 @@ import numpy as np
 from scipy.optimize import least_squares
 
 
-def xyfit(data, calibration_data):
+def xyfit(data, calibration_data, full=False):
     """Return the fit of the voltage data and its parameters.
 
     Args:
@@ -39,6 +39,7 @@ def xyfit(data, calibration_data):
         y_fit, y_pfit = complete_fit(data[:, 0], data[:, 2])
 
     z_fit = x_fit + 1j * y_fit
+    pfit = x_pfit + 1j * y_pfit
 
     fit = np.empty_like(data)
     fit[:, 0] = data[:, 0]
@@ -46,10 +47,6 @@ def xyfit(data, calibration_data):
     fit[:, 2] = y_fit
     fit[:, 3] = np.abs(z_fit)
     fit[:, 4] = np.angle(z_fit, deg=True)
-
-    z_pfit = x_pfit + 1j * y_pfit
-
-    pfit = *np.abs(z_pfit), *np.angle(z_pfit, deg=True)
 
     return fit, pfit
 
@@ -83,7 +80,7 @@ def complete_fit(position, voltage):
     pfit = least_squares(residuals, init_params).x
     fit = asym2sig(position, pfit)
 
-    return fit, pfit[:3]
+    return fit, pfit
 
 
 def partial_fit(position, voltage, fixed_params):
@@ -103,7 +100,7 @@ def partial_fit(position, voltage, fixed_params):
     w_2 = fixed_params[5]
     w_3 = fixed_params[6]
     w_4 = fixed_params[7]
-    partial_params = lambda u_0, u_max, u_min, x_c: [
+    partial_params = lambda u_0, u_max, u_min, x_c: np.array([
         u_0,
         u_max,
         u_min,
@@ -115,7 +112,7 @@ def partial_fit(position, voltage, fixed_params):
         w_2,
         w_3,
         w_4,
-    ]
+    ])
     partial_asym2sig = lambda pos, params: asym2sig(pos, partial_params(*params))
 
     baseline = (max(voltage) + min(voltage)) / 2
@@ -130,7 +127,7 @@ def partial_fit(position, voltage, fixed_params):
     pfit = least_squares(residuals, init_params).x
     fit = partial_asym2sig(position, pfit)
 
-    return fit, pfit[:3]
+    return fit, partial_params(*pfit)
 
 
 def asym2sig(pos, params):

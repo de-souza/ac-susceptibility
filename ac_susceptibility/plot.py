@@ -40,7 +40,8 @@ def plot(data_path, skip_voltage, calibration_data):
 
                 data = load_file(voltage_file)
                 fit, pfit = xyfit(data, calibration_data)
-                temperature_data[i] = freq, *pfit
+                pfit_polar = *np.abs(pfit[:3]), *np.angle(pfit[:3], deg=True)
+                temperature_data[i] = freq, *pfit_polar
 
                 if not skip_voltage:
                     voltage_plot_path = (
