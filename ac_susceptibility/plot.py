@@ -16,7 +16,8 @@
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import least_squares
+
+from .xyfit import xyfit 
 
 
 def plot(data_path, skip_voltage, calibration_data):
@@ -38,7 +39,7 @@ def plot(data_path, skip_voltage, calibration_data):
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
                 data = load_data(voltage_file)
-                fit, pfit = fit_voltage(data, calibration_data)
+                fit, pfit = xyfit(data, calibration_data)
                 temperature_data[i] = freq, *pfit
 
                 if not skip_voltage:
@@ -113,43 +114,6 @@ def load_data(file):
     data[:, 0] -= data[0, 0]  # zero as first position
     data[:, 0] /= 250  # to millimeters
     return data
-
-
-def fit_voltage(data, calibration_data):
-    """Return the fit of the voltage and its parameters.
-
-    Args:
-        data: An array containing the position of the sample, the
-            amplitude of the voltage measured by the lock-in amplifier,
-            and its phase.
-
-    Returns:
-        A tuple of containing the fitted data and a list of the
-        amplitude of the baseline and each peak and their phase.
-
-    """
-    if "fit_parameters" in calibration_data:
-        x_params, y_params = calibration_data["fit_parameters"]
-        x_fit, x_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 1], x_params)
-        y_fit, y_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 2], y_params)
-    else:
-        x_fit, x_pfit = _fit_asym2sig(data[:, 0], data[:, 1])
-        y_fit, y_pfit = _fit_asym2sig(data[:, 0], data[:, 2])
-
-    z_fit = x_fit + 1j * y_fit
-
-    fit = np.empty_like(data)
-    fit[:, 0] = data[:, 0]
-    fit[:, 1] = x_fit
-    fit[:, 2] = y_fit
-    fit[:, 3] = np.abs(z_fit)
-    fit[:, 4] = np.angle(z_fit, deg=True)
-
-    z_pfit = x_pfit + 1j * y_pfit
-
-    pfit = *np.abs(z_pfit), *np.angle(z_pfit, deg=True)
-
-    return fit, pfit
 
 
 def make_voltage_plot(data, fit, path):
@@ -362,103 +326,3 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
 
     axes.set_title(kwargs.get("title", ""))
     axes.grid(True)
-
-
-def _fit_asym2sig(position, voltage):
-    """Return a asymmetric double sigmoidal fit and its parameters.
-
-    Args:
-        position: An array of floats of the position.
-        voltage: An array of floats of the voltage.
-
-    """
-    pos_max = position[voltage.argmax()]
-    pos_min = position[voltage.argmin()]
-    baseline = (max(voltage) + min(voltage)) / 2
-
-    u_0 = baseline
-    u_max = max(voltage) - baseline
-    u_min = min(voltage) - baseline
-    x_c1 = pos_max - (pos_min - pos_max) / 4
-    x_c2 = pos_max + (pos_min - pos_max) / 4
-    x_c3 = pos_min - (pos_min - pos_max) / 4
-    x_c4 = pos_min + (pos_min - pos_max) / 4
-    w_1 = 2
-    w_2 = 2
-    w_3 = 2
-    w_4 = 2
-    init_params = [u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4]
-
-    residuals = lambda pfit: voltage - _asym2sig(pfit, position)
-
-    pfit = least_squares(residuals, init_params).x
-    fit = _asym2sig(pfit, position)
-
-    return fit, pfit[:3]
-
-
-def _stable_fit_asym2sig(position, voltage, fixed_params):
-    """Return a asymmetric double sigmoidal fit and its parameters.
-
-    Args:
-        position: An array of floats of the position.
-        voltage: An array of floats of the voltage.
-        fixed_params: A list of floats of the known parameters.
-
-    """
-    x_c1 = lambda x_c: fixed_params[0] + x_c
-    x_c2 = lambda x_c: fixed_params[1] + x_c
-    x_c3 = lambda x_c: fixed_params[2] + x_c
-    x_c4 = lambda x_c: fixed_params[3] + x_c
-    w_1 = fixed_params[4]
-    w_2 = fixed_params[5]
-    w_3 = fixed_params[6]
-    w_4 = fixed_params[7]
-    asym2sig_params = lambda u_0, u_max, u_min, x_c: [
-        u_0,
-        u_max,
-        u_min,
-        x_c1(x_c),
-        x_c2(x_c),
-        x_c3(x_c),
-        x_c4(x_c),
-        w_1,
-        w_2,
-        w_3,
-        w_4,
-    ]
-    stable_asym2sig = lambda params, pos: _asym2sig(asym2sig_params(*params), pos)
-
-    baseline = (max(voltage) + min(voltage)) / 2
-    init_u_0 = baseline
-    init_u_max = max(voltage) - baseline
-    init_u_min = min(voltage) - baseline
-    init_x_c = 0
-    init_params = [init_u_0, init_u_max, init_u_min, init_x_c]
-
-    residuals = lambda params: voltage - stable_asym2sig(params, position)
-
-    pfit = least_squares(residuals, init_params).x
-    fit = stable_asym2sig(pfit, position)
-
-    return fit, pfit[:3]
-
-
-def _asym2sig(params, pos):
-    """Return an asymmetric double sigmoidal function of the position.
-
-    The asymmetric double sigmoidal function is the difference of two
-    independent sigmoidal functions. They are expressed here as 
-    hyperbolic tangents in order to reduce the computer time.
-
-    Args:
-        params: A list of all the function parameters.
-        pos: A float or array of floats of the position.
-
-    """
-    u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4 = params
-    return (
-        u_0
-        + u_max * (np.tanh((pos - x_c1) / w_1) - np.tanh((pos - x_c2) / w_2)) / 2
-        + u_min * (np.tanh((pos - x_c3) / w_3) - np.tanh((pos - x_c4) / w_4)) / 2
-    )
