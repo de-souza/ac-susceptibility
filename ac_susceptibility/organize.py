@@ -96,7 +96,7 @@ def get_temperature(files):
         for file in files
     ]
     temperature = np.around(np.nanmean(temperature_list))
-    return f"{temperature}K"
+    return f"{temperature:g}K"
 
 
 def renamed_if_exists(folder):
