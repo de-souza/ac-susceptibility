@@ -31,9 +31,9 @@ def xyfit(data, calibration_data):
 
     """
     if "fit_parameters" in calibration_data:
-        x_params, y_params = calibration_data["fit_parameters"]
-        x_fit, x_pfit = partial_fit(data[:, 0], data[:, 1], x_params)
-        y_fit, y_pfit = partial_fit(data[:, 0], data[:, 2], y_params)
+        fit_params = calibration_data["fit_parameters"]
+        x_fit, x_pfit = partial_fit(data[:, 0], data[:, 1], fit_params.real)
+        y_fit, y_pfit = partial_fit(data[:, 0], data[:, 2], fit_params.imag)
     else:
         x_fit, x_pfit = complete_fit(data[:, 0], data[:, 1])
         y_fit, y_pfit = complete_fit(data[:, 0], data[:, 2])

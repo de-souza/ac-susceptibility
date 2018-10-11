@@ -30,7 +30,7 @@ def calibrate(data_path):
 
     fit_params = fit_parameters(data_path)
     if fit_params is not None:
-        calibration_data["fit_parameters"] = fit_params.real, fit_params.imag
+        calibration_data["fit_parameters"] = fit_params
 
     return calibration_data
 
