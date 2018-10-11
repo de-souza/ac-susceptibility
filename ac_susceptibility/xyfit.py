@@ -65,7 +65,6 @@ def complete_fit(position, voltage):
     pos_max = position[voltage.argmax()]
     pos_min = position[voltage.argmin()]
     baseline = (max(voltage) + min(voltage)) / 2
-
     u_0 = baseline
     u_max = max(voltage) - baseline
     u_min = min(voltage) - baseline
@@ -79,10 +78,10 @@ def complete_fit(position, voltage):
     w_4 = 2
     init_params = [u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4]
 
-    residuals = lambda pfit: voltage - asym2sig(pfit, position)
+    residuals = lambda pfit: voltage - asym2sig(position, pfit)
 
     pfit = least_squares(residuals, init_params).x
-    fit = asym2sig(pfit, position)
+    fit = asym2sig(position, pfit)
 
     return fit, pfit[:3]
 
@@ -104,7 +103,7 @@ def partial_fit(position, voltage, fixed_params):
     w_2 = fixed_params[5]
     w_3 = fixed_params[6]
     w_4 = fixed_params[7]
-    asym2sig_params = lambda u_0, u_max, u_min, x_c: [
+    partial_params = lambda u_0, u_max, u_min, x_c: [
         u_0,
         u_max,
         u_min,
@@ -117,7 +116,7 @@ def partial_fit(position, voltage, fixed_params):
         w_3,
         w_4,
     ]
-    stable_asym2sig = lambda params, pos: asym2sig(asym2sig_params(*params), pos)
+    partial_asym2sig = lambda params, pos: asym2sig(pos, partial_params(*params))
 
     baseline = (max(voltage) + min(voltage)) / 2
     init_u_0 = baseline
@@ -126,15 +125,15 @@ def partial_fit(position, voltage, fixed_params):
     init_x_c = 0
     init_params = [init_u_0, init_u_max, init_u_min, init_x_c]
 
-    residuals = lambda params: voltage - stable_asym2sig(params, position)
+    residuals = lambda params: voltage - partial_asym2sig(position, params)
 
     pfit = least_squares(residuals, init_params).x
-    fit = stable_asym2sig(pfit, position)
+    fit = partial_asym2sig(position, pfit)
 
     return fit, pfit[:3]
 
 
-def asym2sig(params, pos):
+def asym2sig(pos, params):
     """Return an asymmetric double sigmoidal function of the position.
 
     The asymmetric double sigmoidal function is the difference of two
@@ -142,8 +141,8 @@ def asym2sig(params, pos):
     hyperbolic tangents in order to reduce the computer time.
 
     Args:
-        params: A list of all the function parameters.
         pos: A float or array of floats of the position.
+        params: A list of all the function parameters.
 
     """
     u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4 = params
