@@ -16,39 +16,7 @@
 import numpy as np
 
 
-def list_subfolders(folder):
-    """Return list of subfolders sorted by temperature.
-
-    Args:
-        folder: A parent folder as a "Path" object.
-
-    Returns:
-        A list of "Path" objects corresponding to the sorted temperature
-        subfolders.
-
-    """
-    subfolders = [entry for entry in folder.iterdir() if entry.is_dir()]
-    subfolders = sorted(subfolders, key=lambda x: int(x.name.split("K")[0]))
-    return subfolders
-
-
-def list_freqs_and_files(folder):
-    """Return list of "fequency, file" tuples within a folder.
-
-    Args:
-        folder: A parent folder as a "Path" object.
-
-    Returns:
-        A list of (freq, file) tuples, where 'freq' is a string of the
-        frequency and 'file' is the file's 'Path' object.
-
-    """
-    files = [entry for entry in folder.iterdir() if entry.name.endswith("txt")]
-    freqs = [float(entry.stem[:-2]) for entry in files]
-    return sorted(zip(freqs, files))
-
-
-def load_file(file):
+def load(file):
     """Return the position, amplitude and phase data from a file.
 
     Args:

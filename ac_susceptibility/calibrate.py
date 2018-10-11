@@ -15,7 +15,7 @@
 #
 import numpy as np
 
-from .load import load_file
+from .load import load
 from .xyfit import xyfit
 
 
@@ -48,7 +48,7 @@ def fit_parameters(data_path):
     if files:
         pfit = np.empty((len(files), 11), dtype=np.complex_)
         for i, voltage_file in enumerate(files):
-            data = load_file(voltage_file)
+            data = load(voltage_file)
             _, pfit[i] = xyfit(data, {})
         fit_params = np.median(pfit, axis=0)[3:]
     else:

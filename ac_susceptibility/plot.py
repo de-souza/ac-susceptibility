@@ -16,7 +16,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .load import list_subfolders, list_freqs_and_files, load_file
+from .load import load
 from .xyfit import xyfit
 
 
@@ -38,7 +38,7 @@ def plot(data_path, skip_voltage, calibration_data):
 
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
-                data = load_file(voltage_file)
+                data = load(voltage_file)
                 fit, pfit = xyfit(data, calibration_data)
                 pfit_polar = *np.abs(pfit[:3]), *np.angle(pfit[:3], deg=True)
                 temperature_data[i] = freq, *pfit_polar
@@ -66,6 +66,38 @@ def init_matplotlib():
     plt.style.use("seaborn-notebook")
     plt.rc("lines", linewidth=1)
     plt.rc("grid", linewidth=0.1)
+
+
+def list_subfolders(folder):
+    """Return list of subfolders sorted by temperature.
+
+    Args:
+        folder: A parent folder as a "Path" object.
+
+    Returns:
+        A list of "Path" objects corresponding to the sorted temperature
+        subfolders.
+
+    """
+    subfolders = [entry for entry in folder.iterdir() if entry.is_dir()]
+    subfolders = sorted(subfolders, key=lambda x: int(x.name.split("K")[0]))
+    return subfolders
+
+
+def list_freqs_and_files(folder):
+    """Return list of "fequency, file" tuples within a folder.
+
+    Args:
+        folder: A parent folder as a "Path" object.
+
+    Returns:
+        A list of (freq, file) tuples, where 'freq' is a string of the
+        frequency and 'file' is the file's 'Path' object.
+
+    """
+    files = [entry for entry in folder.iterdir() if entry.name.endswith("txt")]
+    freqs = [float(entry.stem[:-2]) for entry in files]
+    return sorted(zip(freqs, files))
 
 
 def make_voltage_plot(data, fit, path):
