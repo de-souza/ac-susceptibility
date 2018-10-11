@@ -16,23 +16,6 @@
 import numpy as np
 
 
-def load_file(file):
-    """Return the position, amplitude and phase data from a file.
-
-    Args:
-        file: A file's "Path" object.
-
-    Returns:
-        An array containing the position of the sample, the amplitude of
-        the voltage measured by the lock-in amplifier, and its phase.
-
-    """
-    data = np.genfromtxt(file.as_posix(), skip_header=5, usecols=(0, 1, 2, 3, 4))
-    data[:, 0] -= data[0, 0]  # zero as first position
-    data[:, 0] /= 250  # to millimeters
-    return data
-
-
 def list_subfolders(folder):
     """Return list of subfolders sorted by temperature.
 
@@ -63,3 +46,20 @@ def list_freqs_and_files(folder):
     files = [entry for entry in folder.iterdir() if entry.name.endswith("txt")]
     freqs = [float(entry.stem[:-2]) for entry in files]
     return sorted(zip(freqs, files))
+
+
+def load_file(file):
+    """Return the position, amplitude and phase data from a file.
+
+    Args:
+        file: A file's "Path" object.
+
+    Returns:
+        An array containing the position of the sample, the amplitude of
+        the voltage measured by the lock-in amplifier, and its phase.
+
+    """
+    data = np.genfromtxt(file.as_posix(), skip_header=5, usecols=(0, 1, 2, 3, 4))
+    data[:, 0] -= data[0, 0]  # zero as first position
+    data[:, 0] /= 250  # to millimeters
+    return data
