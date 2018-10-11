@@ -18,7 +18,7 @@ from scipy.optimize import least_squares
 
 
 def xyfit(data, calibration_data):
-    """Return the fit of the voltage and its parameters.
+    """Return the fit of the voltage data and its parameters.
 
     Args:
         data: An array containing the position of the sample, the
@@ -32,11 +32,11 @@ def xyfit(data, calibration_data):
     """
     if "fit_parameters" in calibration_data:
         x_params, y_params = calibration_data["fit_parameters"]
-        x_fit, x_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 1], x_params)
-        y_fit, y_pfit = _stable_fit_asym2sig(data[:, 0], data[:, 2], y_params)
+        x_fit, x_pfit = partial_fit(data[:, 0], data[:, 1], x_params)
+        y_fit, y_pfit = partial_fit(data[:, 0], data[:, 2], y_params)
     else:
-        x_fit, x_pfit = _fit_asym2sig(data[:, 0], data[:, 1])
-        y_fit, y_pfit = _fit_asym2sig(data[:, 0], data[:, 2])
+        x_fit, x_pfit = complete_fit(data[:, 0], data[:, 1])
+        y_fit, y_pfit = complete_fit(data[:, 0], data[:, 2])
 
     z_fit = x_fit + 1j * y_fit
 
@@ -54,7 +54,7 @@ def xyfit(data, calibration_data):
     return fit, pfit
 
 
-def _fit_asym2sig(position, voltage):
+def complete_fit(position, voltage):
     """Return a asymmetric double sigmoidal fit and its parameters.
 
     Args:
@@ -79,15 +79,15 @@ def _fit_asym2sig(position, voltage):
     w_4 = 2
     init_params = [u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4]
 
-    residuals = lambda pfit: voltage - _asym2sig(pfit, position)
+    residuals = lambda pfit: voltage - asym2sig(pfit, position)
 
     pfit = least_squares(residuals, init_params).x
-    fit = _asym2sig(pfit, position)
+    fit = asym2sig(pfit, position)
 
     return fit, pfit[:3]
 
 
-def _stable_fit_asym2sig(position, voltage, fixed_params):
+def partial_fit(position, voltage, fixed_params):
     """Return a asymmetric double sigmoidal fit and its parameters.
 
     Args:
@@ -117,7 +117,7 @@ def _stable_fit_asym2sig(position, voltage, fixed_params):
         w_3,
         w_4,
     ]
-    stable_asym2sig = lambda params, pos: _asym2sig(asym2sig_params(*params), pos)
+    stable_asym2sig = lambda params, pos: asym2sig(asym2sig_params(*params), pos)
 
     baseline = (max(voltage) + min(voltage)) / 2
     init_u_0 = baseline
@@ -134,7 +134,7 @@ def _stable_fit_asym2sig(position, voltage, fixed_params):
     return fit, pfit[:3]
 
 
-def _asym2sig(params, pos):
+def asym2sig(params, pos):
     """Return an asymmetric double sigmoidal function of the position.
 
     The asymmetric double sigmoidal function is the difference of two
