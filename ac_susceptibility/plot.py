@@ -16,7 +16,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .load import load, sorted_subfolders, list_freqs_and_files
+from .load import list_subfolders, list_freqs_and_files, load_file
 from .xyfit import xyfit
 
 
@@ -31,14 +31,14 @@ def plot(data_path, skip_voltage, calibration_data):
 
         magnetization_data = []
 
-        for temperature_folder in sorted_subfolders(measurement_folder):
+        for temperature_folder in list_subfolders(measurement_folder):
 
             freqs_and_files = list_freqs_and_files(temperature_folder)
             temperature_data = np.empty((len(freqs_and_files), 7))
 
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
-                data = load(voltage_file)
+                data = load_file(voltage_file)
                 fit, pfit = xyfit(data, calibration_data)
                 temperature_data[i] = freq, *pfit
 

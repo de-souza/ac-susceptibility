@@ -16,7 +16,7 @@
 import numpy as np
 
 
-def load(file):
+def load_file(file):
     """Return the position, amplitude and phase data from a file.
 
     Args:
@@ -33,7 +33,7 @@ def load(file):
     return data
 
 
-def sorted_subfolders(folder):
+def list_subfolders(folder):
     """Return list of subfolders sorted by temperature.
 
     Args:
