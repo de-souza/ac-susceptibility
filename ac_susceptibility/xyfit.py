@@ -119,7 +119,7 @@ def partial_fit(position, voltage, fixed_params):
     init_u_0 = baseline
     init_u_max = max(voltage) - baseline
     init_u_min = min(voltage) - baseline
-    init_x_c = 0
+    init_x_c = np.mean(position) - np.mean(fixed_params[:4])
     init_params = [init_u_0, init_u_max, init_u_min, init_x_c]
 
     residuals = lambda params: voltage - partial_asym2sig(position, params)
