@@ -285,7 +285,7 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
         if not isinstance(data, list):
             data = [data]
         for i, j in zip(freq, data):
-            axes.plot(i, j, marker=".")
+            axes.plot(i, j, marker=".", ls="")
 
     if "legend" in kwargs:
         axes.legend(kwargs["legend"])
