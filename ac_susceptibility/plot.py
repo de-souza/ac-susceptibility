@@ -60,8 +60,8 @@ def plot(data_path, skip_voltage, calibration_data):
         magnetization_plot_path_polar = (
             output_folder / "magnetization" / (measurement_folder.name + "_polar.pdf")
         )
-        make_magnetization_polar_xy(magnetization_data, magnetization_plot_path_xy)
-        make_magnetization_polar_polar(magnetization_data, magnetization_plot_path_polar)
+        make_magnetization_plot_xy(magnetization_data, magnetization_plot_path_xy)
+        make_magnetization_plot_polar(magnetization_data, magnetization_plot_path_polar)
 
 
 def init_matplotlib():
@@ -143,7 +143,7 @@ def make_voltage_plot(data, fit, path):
     plt.close()
 
 
-def make_magnetization_polar_xy(data, path):
+def make_magnetization_plot_xy(data, path):
     """Plot amplitude and phase of the signal versus frequency.
 
     Args:
@@ -256,7 +256,7 @@ def make_magnetization_polar_xy(data, path):
     plt.close()
 
 
-def make_magnetization_polar_polar(data, path):
+def make_magnetization_plot_polar(data, path):
     """Plot amplitude and phase of the signal versus frequency.
 
     Args:
