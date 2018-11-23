@@ -145,7 +145,7 @@ def make_magnetization_plot(data, path):
 
     Args:
         data: An array or a list of arrays containing tuples of:
-            - A string or list of strings containing the temperature.
+            - A string of the temperature.
             - The position of the sample, the amplitude of the baseline
                 and each peak, and their phase.
         path: The path of the saved plot as a "Path" object.
