@@ -164,13 +164,13 @@ def make_magnetization_polar_xy(data, path):
 
     for i, j in data:
         temp.append(i)
-        curves[0].append(j[:, 0].astype(np.float_))
-        curves[1].append((j[:, 1] / j[:, 0]).real)
-        curves[2].append((j[:, 2] / j[:, 0]).real)
-        curves[3].append((j[:, 3] / j[:, 0]).real)
-        curves[4].append((j[:, 1] / j[:, 0]).imag)
-        curves[5].append((j[:, 2] / j[:, 0]).imag)
-        curves[6].append((j[:, 3] / j[:, 0]).imag)
+        curves[0].append(j[:, 0].real)
+        curves[1].append(j[:, 1].real)
+        curves[2].append(j[:, 2].real)
+        curves[3].append(j[:, 3].real)
+        curves[4].append(j[:, 1].imag)
+        curves[5].append(j[:, 2].imag)
+        curves[6].append(j[:, 3].imag)
 
     max_baseline = max([i[0] for i in curves[1]])
     max_peaks = max(
@@ -277,7 +277,7 @@ def make_magnetization_polar_polar(data, path):
 
     for i, j in data:
         temp.append(i)
-        curves[0].append(j[:, 0].astype(np.float_))
+        curves[0].append(j[:, 0].real)
         curves[1].append(np.abs(j[:, 1] / j[:, 0], dtype=np.float_))
         curves[2].append(np.abs(j[:, 2] / j[:, 0], dtype=np.float_))
         curves[3].append(np.abs(j[:, 3] / j[:, 0], dtype=np.float_))
