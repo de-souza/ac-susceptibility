@@ -54,10 +54,14 @@ def plot(data_path, skip_voltage, calibration_data):
 
             magnetization_data.append([temperature_folder.name, temperature_data])
 
-        magnetization_plot_path = (
+        magnetization_plot_path_xy = (
             output_folder / "magnetization" / (measurement_folder.name + ".pdf")
         )
-        make_magnetization_plot(magnetization_data, magnetization_plot_path)
+        magnetization_plot_path_polar = (
+            output_folder / "magnetization" / (measurement_folder.name + "_polar.pdf")
+        )
+        make_magnetization_polar_xy(magnetization_data, magnetization_plot_path_xy)
+        make_magnetization_polar_polar(magnetization_data, magnetization_plot_path_polar)
 
 
 def init_matplotlib():
@@ -139,7 +143,120 @@ def make_voltage_plot(data, fit, path):
     plt.close()
 
 
-def make_magnetization_plot(data, path):
+def make_magnetization_polar_xy(data, path):
+    """Plot amplitude and phase of the signal versus frequency.
+
+    Args:
+        data: An array or a list of arrays containing tuples of:
+            - A string of the temperature.
+            - The position of the sample, the amplitude of the baseline
+                and each peak, and their phase.
+        path: The path of the saved plot as a "Path" object.
+
+    """
+    print(f'Saving plot "{path.name}"...')
+
+    if not isinstance(data[0], list):
+        data = [data]
+
+    temp = []
+    curves = [[], [], [], [], [], [], []]
+
+    for i, j in data:
+        temp.append(i)
+        curves[0].append(j[:, 0].astype(np.float_))
+        curves[1].append((j[:, 1] / j[:, 0]).real)
+        curves[2].append((j[:, 2] / j[:, 0]).real)
+        curves[3].append((j[:, 3] / j[:, 0]).real)
+        curves[4].append((j[:, 1] / j[:, 0]).imag)
+        curves[5].append((j[:, 2] / j[:, 0]).imag)
+        curves[6].append((j[:, 3] / j[:, 0]).imag)
+
+    max_baseline = max([i[0] for i in curves[1]])
+    max_peaks = max(
+        [np.abs(i[0]) for i in curves[2]] + [np.abs(i[0]) for i in curves[3]]
+    )
+
+    for i in range(len(data)):
+        curves[1][i] /= max_baseline
+        curves[2][i] /= max_peaks
+        curves[3][i] /= max_peaks
+
+    fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(12, 12))
+
+    _draw_ax(
+        ax1,
+        curves[0],
+        curves[1],
+        title="X Baseline",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    _draw_ax(
+        ax2,
+        curves[0],
+        curves[4],
+        title="Y Baseline",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    _draw_ax(
+        ax3,
+        curves[0],
+        curves[2],
+        title="X Peak #1",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    _draw_ax(
+        ax4,
+        curves[0],
+        curves[5],
+        title="Y Peak #1",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    _draw_ax(
+        ax5,
+        curves[0],
+        curves[3],
+        title="X Peak #2",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    _draw_ax(
+        ax6,
+        curves[0],
+        curves[6],
+        title="Y Peak #2",
+        xlabel="Frequency (Hz)",
+        ylabel="Voltage / Frequency (AU)",
+        xscale="log",
+        legend=temp,
+    )
+
+    fig.suptitle(path.name, weight="bold", size="x-large")
+    fig.tight_layout(h_pad=3, w_pad=3, rect=(0, 0, 1, 0.95))
+    fig.savefig(path.as_posix(), dpi=300)
+    plt.close()
+
+
+def make_magnetization_polar_polar(data, path):
     """Plot amplitude and phase of the signal versus frequency.
 
     Args:
