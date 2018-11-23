@@ -281,9 +281,9 @@ def make_magnetization_polar_polar(data, path):
         curves[1].append(np.abs(j[:, 1] / j[:, 0], dtype=np.float_))
         curves[2].append(np.abs(j[:, 2] / j[:, 0], dtype=np.float_))
         curves[3].append(np.abs(j[:, 3] / j[:, 0], dtype=np.float_))
-        curves[4].append(np.angle(j[:, 1], deg=True))
-        curves[5].append(np.angle(j[:, 2], deg=True))
-        curves[6].append(np.angle(j[:, 3], deg=True))
+        curves[4].append(np.unwrap(np.angle(j[:, 1], deg=True), 180))
+        curves[5].append(np.unwrap(np.angle(j[:, 2], deg=True), 180))
+        curves[6].append(np.unwrap(np.angle(j[:, 3], deg=True), 180))
 
     max_baseline = max([i[0] for i in curves[1]])
     max_peaks = max(
