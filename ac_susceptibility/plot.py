@@ -54,14 +54,14 @@ def plot(data_path, skip_voltage, calibration_data):
 
             magnetization_data.append([temperature_folder.name, temperature_data])
 
-        magnetization_plot_path_xy = (
+        magnetization_plot_xy_path = (
             output_folder / "magnetization" / (measurement_folder.name + ".pdf")
         )
-        magnetization_plot_path_polar = (
+        magnetization_plot_polar_path = (
             output_folder / "magnetization" / (measurement_folder.name + "_polar.pdf")
         )
-        make_magnetization_plot_xy(magnetization_data, magnetization_plot_path_xy)
-        make_magnetization_plot_polar(magnetization_data, magnetization_plot_path_polar)
+        make_magnetization_plot_xy(magnetization_data, magnetization_plot_xy_path)
+        make_magnetization_plot_polar(magnetization_data, magnetization_plot_polar_path)
 
 
 def init_matplotlib():
