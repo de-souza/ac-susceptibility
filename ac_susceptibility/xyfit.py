@@ -64,7 +64,7 @@ def complete_fit(position, voltage):
     baseline = (max(voltage) + min(voltage)) / 2
     u_0 = baseline
     u_max = max(voltage) - baseline
-    u_min = min(voltage) - baseline
+    u_min = baseline - min(voltage)
     x_c1 = pos_max - (pos_min - pos_max) / 4
     x_c2 = pos_max + (pos_min - pos_max) / 4
     x_c3 = pos_min - (pos_min - pos_max) / 4
@@ -118,7 +118,7 @@ def partial_fit(position, voltage, fixed_params):
     baseline = (max(voltage) + min(voltage)) / 2
     init_u_0 = baseline
     init_u_max = max(voltage) - baseline
-    init_u_min = min(voltage) - baseline
+    init_u_min = baseline - min(voltage)
     init_x_c = np.mean(position) - np.mean(fixed_params[:4])
     init_params = [init_u_0, init_u_max, init_u_min, init_x_c]
 
@@ -145,6 +145,6 @@ def asym2sig(pos, params):
     u_0, u_max, u_min, x_c1, x_c2, x_c3, x_c4, w_1, w_2, w_3, w_4 = params
     return (
         u_0
-        + u_max * (np.tanh((pos - x_c1) / w_1) - np.tanh((pos - x_c2) / w_2)) / 2
+        - u_max * (np.tanh((pos - x_c1) / w_1) - np.tanh((pos - x_c2) / w_2)) / 2
         + u_min * (np.tanh((pos - x_c3) / w_3) - np.tanh((pos - x_c4) / w_4)) / 2
     )
