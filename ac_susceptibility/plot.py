@@ -34,14 +34,13 @@ def plot(data_path, skip_voltage, calibration_data):
         for temperature_folder in list_subfolders(measurement_folder):
 
             freqs_and_files = list_freqs_and_files(temperature_folder)
-            temperature_data = np.empty((len(freqs_and_files), 7))
+            temperature_data = np.empty((len(freqs_and_files), 4), dtype=np.complex_)
 
             for i, (freq, voltage_file) in enumerate(freqs_and_files):
 
                 data = load(voltage_file)
                 fit, pfit = xyfit(data, calibration_data)
-                pfit_polar = *np.abs(pfit[:3]), *np.angle(pfit[:3], deg=True)
-                temperature_data[i] = freq, *pfit_polar
+                temperature_data[i] = freq, *pfit[:3]
 
                 if not skip_voltage:
                     voltage_plot_path = (
@@ -161,15 +160,13 @@ def make_magnetization_plot(data, path):
 
     for i, j in data:
         temp.append(i)
-        curves[0].append(j[:, 0])
-        curves[1].append(j[:, 1] / j[:, 0])
-        curves[2].append(j[:, 2] / j[:, 0])
-        curves[3].append(j[:, 3] / j[:, 0])
-        # curves[2].append(j[:, 2] / j[:, 1])
-        # curves[3].append(j[:, 3] / j[:, 1])
-        curves[4].append(j[:, 4])
-        curves[5].append(j[:, 5])
-        curves[6].append(j[:, 6])
+        curves[0].append(j[:, 0].astype(np.float_))
+        curves[1].append(np.abs(j[:, 1] / j[:, 0], dtype=np.float_))
+        curves[2].append(np.abs(j[:, 2] / j[:, 0], dtype=np.float_))
+        curves[3].append(np.abs(j[:, 3] / j[:, 0], dtype=np.float_))
+        curves[4].append(np.angle(j[:, 1], deg=True))
+        curves[5].append(np.angle(j[:, 2], deg=True))
+        curves[6].append(np.angle(j[:, 3], deg=True))
 
     max_baseline = max([i[0] for i in curves[1]])
     max_peaks = max(
