@@ -166,22 +166,12 @@ def make_magnetization_plot_xy(data, path):
     for i, j in data:
         temp.append(i)
         curves[0].append(j[:, 0].real)
-        curves[1].append(j[:, 1].real)
-        curves[2].append(j[:, 2].real)
-        curves[3].append(j[:, 3].real)
-        curves[4].append(j[:, 1].imag)
-        curves[5].append(j[:, 2].imag)
-        curves[6].append(j[:, 3].imag)
-
-    max_baseline = max([i[0] for i in curves[1]])
-    max_peaks = max(
-        [np.abs(i[0]) for i in curves[2]] + [np.abs(i[0]) for i in curves[3]]
-    )
-
-    for i in range(len(data)):
-        curves[1][i] /= max_baseline
-        curves[2][i] /= max_peaks
-        curves[3][i] /= max_peaks
+        curves[1].append((j[:, 1] / j[:, 0]).real * 1e6)
+        curves[2].append((j[:, 2] / j[:, 0]).real * 1e6)
+        curves[3].append((j[:, 3] / j[:, 0]).real * 1e6)
+        curves[4].append(j[:, 1].imag / j[:, 0].real * 1e6)
+        curves[5].append(j[:, 2].imag / j[:, 0].real * 1e6)
+        curves[6].append(j[:, 3].imag / j[:, 0].real * 1e6)
 
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(12, 12))
 
@@ -191,7 +181,7 @@ def make_magnetization_plot_xy(data, path):
         curves[1],
         title="X Baseline",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -202,7 +192,7 @@ def make_magnetization_plot_xy(data, path):
         curves[4],
         title="Y Baseline",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -213,7 +203,7 @@ def make_magnetization_plot_xy(data, path):
         curves[2],
         title="X Peak #1",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -224,7 +214,7 @@ def make_magnetization_plot_xy(data, path):
         curves[5],
         title="Y Peak #1",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -235,7 +225,7 @@ def make_magnetization_plot_xy(data, path):
         curves[3],
         title="X Peak #2",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -246,7 +236,7 @@ def make_magnetization_plot_xy(data, path):
         curves[6],
         title="Y Peak #2",
         xlabel="Frequency (Hz)",
-        ylabel="Voltage / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -276,22 +266,12 @@ def make_magnetization_plot_polar(data, path):
     for i, j in data:
         temp.append(i)
         curves[0].append(j[:, 0].real)
-        curves[1].append(np.abs(j[:, 1] / j[:, 0], dtype=np.float_))
-        curves[2].append(np.abs(j[:, 2] / j[:, 0], dtype=np.float_))
-        curves[3].append(np.abs(j[:, 3] / j[:, 0], dtype=np.float_))
+        curves[1].append(np.abs(j[:, 1] / j[:, 0]) * 1e6)
+        curves[2].append(np.abs(j[:, 2] / j[:, 0]) * 1e6)
+        curves[3].append(np.abs(j[:, 3] / j[:, 0]) * 1e6)
         curves[4].append(np.unwrap(np.angle(j[:, 1], deg=True), 180))
         curves[5].append(np.unwrap(np.angle(j[:, 2], deg=True), 180))
         curves[6].append(np.unwrap(np.angle(j[:, 3], deg=True), 180))
-
-    max_baseline = max([i[0] for i in curves[1]])
-    max_peaks = max(
-        [np.abs(i[0]) for i in curves[2]] + [np.abs(i[0]) for i in curves[3]]
-    )
-
-    for i in range(len(data)):
-        curves[1][i] /= max_baseline
-        curves[2][i] /= max_peaks
-        curves[3][i] /= max_peaks
 
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(12, 12))
 
@@ -301,7 +281,7 @@ def make_magnetization_plot_polar(data, path):
         curves[1],
         title="Amplitude Baseline",
         xlabel="Frequency (Hz)",
-        ylabel="Amplitude / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -323,7 +303,7 @@ def make_magnetization_plot_polar(data, path):
         curves[2],
         title="Amplitude Peak #1",
         xlabel="Frequency (Hz)",
-        ylabel="Amplitude / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -345,7 +325,7 @@ def make_magnetization_plot_polar(data, path):
         curves[3],
         title="Amplitude Peak #2",
         xlabel="Frequency (Hz)",
-        ylabel="Amplitude / Frequency (AU)",
+        ylabel="Voltage / Frequency (mV / kHz)",
         xscale="log",
         legend=temp,
     )
@@ -382,6 +362,7 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
             - ylabel: The ylabel strings.
             - xscale: ['linear' | 'log' | 'logit' | 'symlog']
             - legend: An iterable of strings for the legend.
+            - legend_ncol: The number of columns in the legend.
 
     """
     if not isinstance(freq, list):
