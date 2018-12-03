@@ -154,7 +154,7 @@ def make_voltage_plot(data, fit, path):
 
 
 def make_magnetization_plot_xy(data, path):
-    """Plot amplitude and phase of the signal versus frequency.
+    """Plot real and imaginary parts of the signal versus frequency.
 
     Args:
         data: An array or a list of arrays containing tuples of:
