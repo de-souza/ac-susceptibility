@@ -160,9 +160,6 @@ def make_magnetization_plot_xy(data, path):
     """
     print(f'Saving plot "{path.name}"...')
 
-    if not isinstance(data[0], list):
-        data = [data]
-
     temp = []
     curves = [[], [], [], [], [], [], []]
 
@@ -272,9 +269,6 @@ def make_magnetization_plot_polar(data, path):
 
     """
     print(f'Saving plot "{path.name}"...')
-
-    if not isinstance(data[0], list):
-        data = [data]
 
     temp = []
     curves = [[], [], [], [], [], [], []]
