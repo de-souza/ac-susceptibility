@@ -2,7 +2,7 @@
 
 Organize and plot [AC susceptibility](https://en.wikipedia.org/wiki/Magnetic_susceptibility) measurement data. This program is written specifically to analyze data files created by the AC susceptometer in the [Nanophysics & Molecular Nanomagnets group](http://www.mnm.uni-freiburg.de/home.php) at the University of Freiburg.
 
-![Example Picture](data\output\magnetization\2018-10-05%20(Mn19%20@%2011-47K)_xy.pdf)
+![Example Picture](data/output/magnetization/2018-10-05%20(Mn19%20@%2011-47K)_xy.pdf)
 
 ## Usage
 
