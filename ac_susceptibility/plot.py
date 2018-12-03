@@ -162,6 +162,8 @@ def make_magnetization_plot_xy(data, path):
     """
     print(f'Saving plot "{path.name}"...')
 
+    path.parent.mkdir(parents=True, exist_ok=True)
+
     temp = []
     curves = [[], [], [], [], [], [], []]
 
