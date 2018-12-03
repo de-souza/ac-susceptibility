@@ -135,7 +135,7 @@ def asym2sig(pos, params):
 
     The asymmetric double sigmoidal function is the difference of two
     independent sigmoidal functions. They are expressed here as 
-    hyperbolic tangents in order to reduce the computer time.
+    hyperbolic tangents in order to reduce the computing time.
 
     Args:
         pos: A float or array of floats of the position.
