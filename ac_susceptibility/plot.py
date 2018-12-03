@@ -129,6 +129,7 @@ def make_voltage_plot(data, fit, path):
         xlabel="Position (mm)",
         ylabel="Voltage (mV)",
         legend=["Fit", "Data"],
+        ncol=1,
     )
 
     _draw_ax(
@@ -140,6 +141,7 @@ def make_voltage_plot(data, fit, path):
         xlabel="Position (mm)",
         ylabel="Voltage (mV)",
         legend=["Fit", "Data"],
+        ncol=1,
     )
 
     fig.tight_layout()
@@ -381,7 +383,7 @@ def _draw_ax(axes, freq, data=None, fit=None, **kwargs):
             axes.plot(i, j, marker=".")
 
     if "legend" in kwargs:
-        axes.legend(kwargs["legend"])
+        axes.legend(kwargs["legend"], ncol=kwargs.get("ncol", 2))
 
     axes.set_xlabel(kwargs.get("xlabel", ""))
     axes.set_ylabel(kwargs.get("ylabel", ""))
