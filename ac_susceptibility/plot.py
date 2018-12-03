@@ -48,7 +48,7 @@ def plot(data_path, skip_voltage, calibration_data):
                         / "voltage"
                         / measurement_folder.name
                         / temperature_folder.name
-                        / (voltage_file.stem + ".png")
+                        / (voltage_file.stem + ".pdf")
                     )
                     make_voltage_plot(data, fit, voltage_plot_path)
 
@@ -118,15 +118,17 @@ def make_voltage_plot(data, fit, path):
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4))
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(11, 4))
 
     _draw_ax(
         ax1,
         data[:, 0],
         data[:, 1] * 1000,
         fit[:, 1] * 1000,
+        title="X Channel",
         xlabel="Position (mm)",
-        ylabel="X Channel (mV)",
+        ylabel="Voltage (mV)",
+        legend=["Fit", "Data"],
     )
 
     _draw_ax(
@@ -134,12 +136,14 @@ def make_voltage_plot(data, fit, path):
         data[:, 0],
         data[:, 2] * 1000,
         fit[:, 2] * 1000,
+        title="Y Channel",
         xlabel="Position (mm)",
-        ylabel="Y Channel (mV)",
+        ylabel="Voltage (mV)",
+        legend=["Fit", "Data"],
     )
 
     fig.tight_layout()
-    fig.savefig(path.as_posix(), dpi=150)
+    fig.savefig(path.as_posix(), dpi=300)
     plt.close()
 
 
