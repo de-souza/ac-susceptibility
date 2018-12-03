@@ -118,11 +118,15 @@ def make_voltage_plot(data, fit, path):
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
+    pos = data[:, 0]
+    if pos[-1] < 0:
+        pos = -pos
+
     fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(11, 4))
 
     _draw_ax(
         ax1,
-        data[:, 0],
+        pos,
         data[:, 1] * 1000,
         fit[:, 1] * 1000,
         title="X Channel",
@@ -134,7 +138,7 @@ def make_voltage_plot(data, fit, path):
 
     _draw_ax(
         ax2,
-        data[:, 0],
+        pos,
         data[:, 2] * 1000,
         fit[:, 2] * 1000,
         title="Y Channel",
