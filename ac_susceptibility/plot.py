@@ -55,7 +55,7 @@ def plot(data_path, skip_voltage, calibration_data):
             magnetization_data.append([temperature_folder.name, temperature_data])
 
         magnetization_plot_xy_path = (
-            output_folder / "magnetization" / (measurement_folder.name + ".pdf")
+            output_folder / "magnetization" / (measurement_folder.name + "_xy.pdf")
         )
         magnetization_plot_polar_path = (
             output_folder / "magnetization" / (measurement_folder.name + "_polar.pdf")
