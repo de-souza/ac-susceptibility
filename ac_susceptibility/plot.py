@@ -48,17 +48,17 @@ def plot(data_path, skip_voltage, calibration_data):
                         / "voltage"
                         / measurement_folder.name
                         / temperature_folder.name
-                        / (voltage_file.stem + ".pdf")
+                        / (voltage_file.stem + ".png")
                     )
                     make_voltage_plot(data, fit, voltage_plot_path)
 
             magnetization_data.append([temperature_folder.name, temperature_data])
 
         magnetization_plot_xy_path = (
-            output_folder / "magnetization" / (measurement_folder.name + "_xy.pdf")
+            output_folder / "magnetization" / (measurement_folder.name + "_xy.png")
         )
         magnetization_plot_polar_path = (
-            output_folder / "magnetization" / (measurement_folder.name + "_polar.pdf")
+            output_folder / "magnetization" / (measurement_folder.name + "_polar.png")
         )
         make_magnetization_plot_xy(magnetization_data, magnetization_plot_xy_path)
         make_magnetization_plot_polar(magnetization_data, magnetization_plot_polar_path)
@@ -149,7 +149,7 @@ def make_voltage_plot(data, fit, path):
     )
 
     fig.tight_layout()
-    fig.savefig(path.as_posix(), dpi=300)
+    fig.savefig(path.as_posix(), dpi=150)
     plt.close()
 
 
