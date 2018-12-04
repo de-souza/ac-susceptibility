@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name="ac-susceptibility",
     version="0.1.0",
-    description="Organize and plot ac-susceptibility measurement data",
+    description="Organize, fit and plot ac-susceptibility measurement data.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Léo De Souza",
